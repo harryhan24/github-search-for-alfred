@@ -1,0 +1,33 @@
+name: Release Alfred Workflow
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .alfredworkflow
+        run: |
+          mkdir -p staging
+          cp info.plist staging/
+          # Include any icon PNGs at the repo root (Alfred references them by hash filename)
+          shopt -s nullglob
+          for f in *.png; do
+            cp "$f" staging/
+          done
+          cd staging
+          zip -r "../github-search-for-alfred.alfredworkflow" .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: github-search-for-alfred.alfredworkflow
+          generate_release_notes: true

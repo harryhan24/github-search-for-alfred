@@ -172,19 +172,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>E1111111-1111-1111-1111-111111111111</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>B8888888-8888-8888-8888-888888888888</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>D1111111-1111-1111-1111-111111111111</key>
 		<array>
 			<dict>
@@ -211,6 +198,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>E1111111-1111-1111-1111-111111111111</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B8888888-8888-8888-8888-888888888888</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Harry Han</string>
@@ -222,6 +222,77 @@
 	<string>Advance Github Search</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>search</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>B5555555-5555-5555-5555-555555555555</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>script</key>
+				<string>parts=""
+if [ -n "$user_filter" ]; then
+  parts="$user_filter"
+fi
+if [ -n "$search" ]; then
+  parts="${parts:+${parts}+}${search}"
+fi
+open "https://github.com/search?q=${parts}&amp;type=code"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B6666666-6666-6666-6666-666666666666</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>{var:option_key}</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Enter your search query.</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>B4444444-4444-4444-4444-444444444444</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -274,6 +345,108 @@
 			<string>B2222222-2222-2222-2222-222222222222</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:option_key}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>q="$1"
+q="${q#"${q%%[![:space:]]*}"}"
+q="${q%"${q##*[![:space:]]}"}"
+ql=$(printf '%s' "$q" | tr '[:upper:]' '[:lower:]')
+items=""
+while IFS='|' read -r title arg subtitle match; do
+  hit=0
+  case " $match " in
+    *" $ql"*) hit=1 ;;
+  esac
+  if [ -z "$ql" ] || [ "$hit" = 1 ]; then
+    items="${items:+$items,}{\"title\":\"$title\",\"subtitle\":\"$subtitle\",\"arg\":\"$arg\"}"
+  fi
+done &lt;&lt;'DATA'
+ts|typescript|TypeScript|ts typescript
+js|javascript|JavaScript|js javascript
+tsx|tsx|TSX|tsx typescript react
+jsx|jsx|JSX|jsx javascript react
+kt|kotlin|Kotlin|kt kotlin
+java|java|Java|java
+swift|swift|Swift|swift
+py|python|Python|py python
+go|go|Go|go golang
+rs|rust|Rust|rs rust
+rb|ruby|Ruby|rb ruby
+php|php|PHP|php
+c|c|C|c
+cpp|c%2B%2B|C++|cpp c++ cplusplus
+cs|c%23|C#|cs c# csharp
+objc|objective-c|Objective-C|objc objective-c objectivec
+dart|dart|Dart|dart
+lua|lua|Lua|lua
+sh|shell|Shell (bash/zsh)|sh shell bash zsh
+md|markdown|Markdown|md markdown
+html|html|HTML|html
+css|css|CSS|css
+scss|scss|SCSS|scss sass
+json|json|JSON|json
+yaml|yaml|YAML|yaml yml
+xml|xml|XML|xml
+sql|sql|SQL|sql
+DATA
+raw=""
+if [ -n "$q" ]; then
+  esc=$(printf '%s' "$q" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')
+  enc=$(printf '%s' "$q" | sed -e 's/%/%25/g' -e 's/+/%2B/g' -e 's/#/%23/g' -e 's/&amp;/%26/g' -e 's/?/%3F/g' -e 's/"/%22/g' -e 's/ /%20/g')
+  raw="{\"title\":\"$esc\",\"subtitle\":\"language:$esc — use as typed\",\"arg\":\"$enc\"}"
+fi
+all="$raw"
+if [ -n "$items" ]; then
+  all="${all:+$all,}$items"
+fi
+printf '{"items":[%s]}' "$all"
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Type any language — Enter uses it as typed</string>
+				<key>title</key>
+				<string>language picker</string>
+				<key>type</key>
+				<integer>5</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>C1111111-1111-1111-1111-111111111111</string>
+			<key>version</key>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -339,118 +512,6 @@
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>{var:option_key}</string>
-				<key>subtext</key>
-				<string></string>
-				<key>text</key>
-				<string>Enter your search query.</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>B4444444-4444-4444-4444-444444444444</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string></string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict>
-					<key>search</key>
-					<string>{query}</string>
-				</dict>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>B5555555-5555-5555-5555-555555555555</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>127</integer>
-				<key>script</key>
-				<string>parts=""
-if [ -n "$user_filter" ]; then
-  parts="$user_filter"
-fi
-if [ -n "$search" ]; then
-  parts="${parts:+${parts}+}${search}"
-fi
-open "https://github.com/search?q=${parts}&amp;type=code"</string>
-				<key>scriptargtype</key>
-				<integer>0</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>5</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>B6666666-6666-6666-6666-666666666666</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>{var:option_key}</string>
-				<key>subtext</key>
-				<string></string>
-				<key>text</key>
-				<string>Enter the {var:option_key} value.</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>B7777777-7777-7777-7777-777777777777</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string></string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict>
-					<key>option_value</key>
-					<string>{query}</string>
-				</dict>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>B8888888-8888-8888-8888-888888888888</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>keyword</key>
 				<string>{var:option_value}</string>
@@ -477,14 +538,14 @@ open "https://github.com/search?q=${parts}&amp;type=code"</string>
 				<false/>
 				<key>variables</key>
 				<dict>
-					<key>search</key>
+					<key>option_value</key>
 					<string>{query}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>BAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA</string>
+			<string>B8888888-8888-8888-8888-888888888888</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -532,62 +593,20 @@ open "https://github.com/search?q=${parts}&amp;type=code"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>fixedorder</key>
-				<true/>
-				<key>items</key>
-				<string>[{"title":"ts","arg":"typescript","subtitle":"TypeScript","match":"ts typescript"},{"title":"js","arg":"javascript","subtitle":"JavaScript","match":"js javascript"},{"title":"tsx","arg":"tsx","subtitle":"TSX","match":"tsx typescript react"},{"title":"jsx","arg":"jsx","subtitle":"JSX","match":"jsx javascript react"},{"title":"kt","arg":"kotlin","subtitle":"Kotlin","match":"kt kotlin"},{"title":"java","arg":"java","subtitle":"Java","match":"java"},{"title":"swift","arg":"swift","subtitle":"Swift","match":"swift"},{"title":"py","arg":"python","subtitle":"Python","match":"py python"},{"title":"go","arg":"go","subtitle":"Go","match":"go golang"},{"title":"rs","arg":"rust","subtitle":"Rust","match":"rs rust"},{"title":"rb","arg":"ruby","subtitle":"Ruby","match":"rb ruby"},{"title":"php","arg":"php","subtitle":"PHP","match":"php"},{"title":"c","arg":"c","subtitle":"C","match":"c"},{"title":"cpp","arg":"c%2B%2B","subtitle":"C++","match":"cpp c++ cplusplus"},{"title":"cs","arg":"c%23","subtitle":"C#","match":"cs c# csharp"},{"title":"objc","arg":"objective-c","subtitle":"Objective-C","match":"objc objective-c objectivec"},{"title":"dart","arg":"dart","subtitle":"Dart","match":"dart"},{"title":"lua","arg":"lua","subtitle":"Lua","match":"lua"},{"title":"sh","arg":"shell","subtitle":"Shell (bash/zsh)","match":"sh shell bash zsh"},{"title":"md","arg":"markdown","subtitle":"Markdown","match":"md markdown"},{"title":"html","arg":"html","subtitle":"HTML","match":"html"},{"title":"css","arg":"css","subtitle":"CSS","match":"css"},{"title":"scss","arg":"scss","subtitle":"SCSS","match":"scss sass"},{"title":"json","arg":"json","subtitle":"JSON","match":"json"},{"title":"yaml","arg":"yaml","subtitle":"YAML","match":"yaml yml"},{"title":"xml","arg":"xml","subtitle":"XML","match":"xml"},{"title":"sql","arg":"sql","subtitle":"SQL","match":"sql"}]</string>
-				<key>keyword</key>
-				<string>{var:option_key}</string>
-				<key>matchmode</key>
-				<integer>0</integer>
-				<key>runningsubtext</key>
+				<key>argument</key>
 				<string></string>
-				<key>subtext</key>
-				<string>Pick a popular language</string>
-				<key>title</key>
-				<string>language picker</string>
-				<key>withspace</key>
-				<true/>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>search</key>
+					<string>{query}</string>
+				</dict>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.listfilter</string>
+			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>C1111111-1111-1111-1111-111111111111</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>fixedorder</key>
-				<true/>
-				<key>items</key>
-				<string>[{"title":"ts","arg":"ts","subtitle":"TypeScript","match":"ts typescript"},{"title":"tsx","arg":"tsx","subtitle":"TypeScript React","match":"tsx typescript react"},{"title":"js","arg":"js","subtitle":"JavaScript","match":"js javascript"},{"title":"jsx","arg":"jsx","subtitle":"JavaScript React","match":"jsx javascript react"},{"title":"mjs","arg":"mjs","subtitle":"ES Module","match":"mjs es module esmodule javascript"},{"title":"cjs","arg":"cjs","subtitle":"CommonJS Module","match":"cjs commonjs javascript"},{"title":"py","arg":"py","subtitle":"Python","match":"py python"},{"title":"rb","arg":"rb","subtitle":"Ruby","match":"rb ruby"},{"title":"go","arg":"go","subtitle":"Go","match":"go golang"},{"title":"rs","arg":"rs","subtitle":"Rust","match":"rs rust"},{"title":"kt","arg":"kt","subtitle":"Kotlin","match":"kt kotlin"},{"title":"java","arg":"java","subtitle":"Java","match":"java"},{"title":"swift","arg":"swift","subtitle":"Swift","match":"swift"},{"title":"c","arg":"c","subtitle":"C","match":"c"},{"title":"h","arg":"h","subtitle":"C/C++ Header","match":"h header c cpp c++"},{"title":"cpp","arg":"cpp","subtitle":"C++","match":"cpp c++ cplusplus"},{"title":"hpp","arg":"hpp","subtitle":"C++ Header","match":"hpp c++ header cplusplus"},{"title":"cs","arg":"cs","subtitle":"C#","match":"cs c# csharp"},{"title":"m","arg":"m","subtitle":"Objective-C","match":"m objc objective-c objectivec"},{"title":"mm","arg":"mm","subtitle":"Objective-C++","match":"mm objc++ objective-c++ objectivecpp"},{"title":"dart","arg":"dart","subtitle":"Dart","match":"dart"},{"title":"lua","arg":"lua","subtitle":"Lua","match":"lua"},{"title":"sh","arg":"sh","subtitle":"Shell","match":"sh shell"},{"title":"bash","arg":"bash","subtitle":"Bash","match":"bash shell"},{"title":"zsh","arg":"zsh","subtitle":"Zsh","match":"zsh shell"},{"title":"md","arg":"md","subtitle":"Markdown","match":"md markdown"},{"title":"mdx","arg":"mdx","subtitle":"MDX","match":"mdx markdown"},{"title":"html","arg":"html","subtitle":"HTML","match":"html"},{"title":"css","arg":"css","subtitle":"CSS","match":"css"},{"title":"scss","arg":"scss","subtitle":"SCSS","match":"scss sass"},{"title":"sass","arg":"sass","subtitle":"Sass","match":"sass scss"},{"title":"less","arg":"less","subtitle":"Less","match":"less"},{"title":"json","arg":"json","subtitle":"JSON","match":"json"},{"title":"yaml","arg":"yaml","subtitle":"YAML","match":"yaml yml"},{"title":"yml","arg":"yml","subtitle":"YAML","match":"yml yaml"},{"title":"toml","arg":"toml","subtitle":"TOML","match":"toml"},{"title":"xml","arg":"xml","subtitle":"XML","match":"xml"},{"title":"sql","arg":"sql","subtitle":"SQL","match":"sql"},{"title":"vue","arg":"vue","subtitle":"Vue","match":"vue"},{"title":"svelte","arg":"svelte","subtitle":"Svelte","match":"svelte"},{"title":"php","arg":"php","subtitle":"PHP","match":"php"},{"title":"env","arg":"env","subtitle":"Environment file","match":"env environment dotenv"},{"title":"ini","arg":"ini","subtitle":"INI","match":"ini"},{"title":"conf","arg":"conf","subtitle":"Config","match":"conf config"}]</string>
-				<key>keyword</key>
-				<string>{var:option_key}</string>
-				<key>matchmode</key>
-				<integer>0</integer>
-				<key>runningsubtext</key>
-				<string></string>
-				<key>subtext</key>
-				<string>Pick a popular file extension</string>
-				<key>title</key>
-				<string>extension picker</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.listfilter</string>
-			<key>uid</key>
-			<string>E1111111-1111-1111-1111-111111111111</string>
+			<string>BAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -644,22 +663,162 @@ open "https://github.com/search?q=${parts}&amp;type=code"</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:option_key}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>q="$1"
+q="${q#"${q%%[![:space:]]*}"}"
+q="${q%"${q##*[![:space:]]}"}"
+ql=$(printf '%s' "$q" | tr '[:upper:]' '[:lower:]')
+items=""
+while IFS='|' read -r title arg subtitle match; do
+  hit=0
+  case " $match " in
+    *" $ql"*) hit=1 ;;
+  esac
+  if [ -z "$ql" ] || [ "$hit" = 1 ]; then
+    items="${items:+$items,}{\"title\":\"$title\",\"subtitle\":\"$subtitle\",\"arg\":\"$arg\"}"
+  fi
+done &lt;&lt;'DATA'
+ts|ts|TypeScript|ts typescript
+tsx|tsx|TypeScript React|tsx typescript react
+js|js|JavaScript|js javascript
+jsx|jsx|JavaScript React|jsx javascript react
+mjs|mjs|ES Module|mjs es module esmodule javascript
+cjs|cjs|CommonJS Module|cjs commonjs javascript
+py|py|Python|py python
+rb|rb|Ruby|rb ruby
+go|go|Go|go golang
+rs|rs|Rust|rs rust
+kt|kt|Kotlin|kt kotlin
+java|java|Java|java
+swift|swift|Swift|swift
+c|c|C|c
+h|h|C/C++ Header|h header c cpp c++
+cpp|cpp|C++|cpp c++ cplusplus
+hpp|hpp|C++ Header|hpp c++ header cplusplus
+cs|cs|C#|cs c# csharp
+m|m|Objective-C|m objc objective-c objectivec
+mm|mm|Objective-C++|mm objc++ objective-c++ objectivecpp
+dart|dart|Dart|dart
+lua|lua|Lua|lua
+sh|sh|Shell|sh shell
+bash|bash|Bash|bash shell
+zsh|zsh|Zsh|zsh shell
+md|md|Markdown|md markdown
+mdx|mdx|MDX|mdx markdown
+html|html|HTML|html
+css|css|CSS|css
+scss|scss|SCSS|scss sass
+sass|sass|Sass|sass scss
+less|less|Less|less
+json|json|JSON|json
+yaml|yaml|YAML|yaml yml
+yml|yml|YAML|yml yaml
+toml|toml|TOML|toml
+xml|xml|XML|xml
+sql|sql|SQL|sql
+vue|vue|Vue|vue
+svelte|svelte|Svelte|svelte
+php|php|PHP|php
+env|env|Environment file|env environment dotenv
+ini|ini|INI|ini
+conf|conf|Config|conf config
+DATA
+raw=""
+if [ -n "$q" ]; then
+  esc=$(printf '%s' "$q" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')
+  enc=$(printf '%s' "$q" | sed -e 's/%/%25/g' -e 's/+/%2B/g' -e 's/#/%23/g' -e 's/&amp;/%26/g' -e 's/?/%3F/g' -e 's/"/%22/g' -e 's/ /%20/g')
+  raw="{\"title\":\"$esc\",\"subtitle\":\"path:*.$esc — use as typed\",\"arg\":\"$enc\"}"
+fi
+all="$raw"
+if [ -n "$items" ]; then
+  all="${all:+$all,}$items"
+fi
+printf '{"items":[%s]}' "$all"
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Type any extension — Enter uses it as typed</string>
+				<key>title</key>
+				<string>extension picker</string>
+				<key>type</key>
+				<integer>5</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>E1111111-1111-1111-1111-111111111111</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>{var:option_key}</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Enter the {var:option_key} value.</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>B7777777-7777-7777-7777-777777777777</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Advance Github Search
 
 Type `gh` (full GitHub search) or `gm` (restricted to user:{var:github_user}) and pick from the menu:
 - Github Search ...   → search the query as-is
-- option: extension   → extension picker (ts, kt, md, ...)
+- option: extension   → extension picker (ts, kt, md, ...) or free input
 - option: filename    → filename (path:**/&lt;value&gt;)
 - option: path        → path (path:&lt;value&gt;)
-- option: language    → language picker (ts, kt, md, ...)
+- option: language    → language picker (ts, kt, md, ...) or free input
 - option: symbol      → symbol (function / class name)
 
 Flow:
 1. `gh` or `gm` → pick option
 2-a. Github Search: enter query → opens GitHub Code Search results
-2-b. language / extension: pick from list → enter query (optional) → opens results
+2-b. language / extension: pick from list or type any value → enter query (optional) → opens results
 2-c. other options: enter value → enter query (optional) → opens results
 
 Configure the GitHub username under "Configure Workflow…".</string>
@@ -672,91 +831,91 @@ Configure the GitHub username under "Configure Workflow…".</string>
 			<key>note</key>
 			<string>entry: gh</string>
 			<key>xpos</key>
-			<real>30</real>
+			<real>30.0</real>
 			<key>ypos</key>
-			<real>300</real>
+			<real>300.0</real>
 		</dict>
 		<key>B2222222-2222-2222-2222-222222222222</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>4</integer>
 			<key>xpos</key>
-			<real>230</real>
+			<real>230.0</real>
 			<key>ypos</key>
-			<real>300</real>
+			<real>300.0</real>
 		</dict>
 		<key>B3333333-3333-3333-3333-333333333333</key>
 		<dict>
 			<key>xpos</key>
-			<real>430</real>
+			<real>430.0</real>
 			<key>ypos</key>
-			<real>400</real>
+			<real>400.0</real>
 		</dict>
 		<key>B4444444-4444-4444-4444-444444444444</key>
 		<dict>
 			<key>note</key>
 			<string>direct path</string>
 			<key>xpos</key>
-			<real>630</real>
+			<real>630.0</real>
 			<key>ypos</key>
-			<real>120</real>
+			<real>120.0</real>
 		</dict>
 		<key>B5555555-5555-5555-5555-555555555555</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>4</integer>
 			<key>xpos</key>
-			<real>830</real>
+			<real>830.0</real>
 			<key>ypos</key>
-			<real>120</real>
+			<real>120.0</real>
 		</dict>
 		<key>B6666666-6666-6666-6666-666666666666</key>
 		<dict>
 			<key>xpos</key>
-			<real>1030</real>
+			<real>1030.0</real>
 			<key>ypos</key>
-			<real>120</real>
+			<real>120.0</real>
 		</dict>
 		<key>B7777777-7777-7777-7777-777777777777</key>
 		<dict>
 			<key>note</key>
 			<string>filter path (free text)</string>
 			<key>xpos</key>
-			<real>630</real>
+			<real>630.0</real>
 			<key>ypos</key>
-			<real>720</real>
+			<real>720.0</real>
 		</dict>
 		<key>B8888888-8888-8888-8888-888888888888</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>4</integer>
 			<key>xpos</key>
-			<real>830</real>
+			<real>830.0</real>
 			<key>ypos</key>
-			<real>440</real>
+			<real>440.0</real>
 		</dict>
 		<key>B9999999-9999-9999-9999-999999999999</key>
 		<dict>
 			<key>xpos</key>
-			<real>1030</real>
+			<real>1030.0</real>
 			<key>ypos</key>
-			<real>440</real>
+			<real>440.0</real>
 		</dict>
 		<key>BAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>4</integer>
 			<key>xpos</key>
-			<real>1230</real>
+			<real>1230.0</real>
 			<key>ypos</key>
-			<real>440</real>
+			<real>440.0</real>
 		</dict>
 		<key>BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB</key>
 		<dict>
 			<key>xpos</key>
-			<real>1430</real>
+			<real>1430.0</real>
 			<key>ypos</key>
-			<real>440</real>
+			<real>440.0</real>
 		</dict>
 		<key>C1111111-1111-1111-1111-111111111111</key>
 		<dict>
@@ -765,20 +924,9 @@ Configure the GitHub username under "Configure Workflow…".</string>
 			<key>note</key>
 			<string>language picker</string>
 			<key>xpos</key>
-			<real>630</real>
+			<real>630.0</real>
 			<key>ypos</key>
-			<real>340</real>
-		</dict>
-		<key>E1111111-1111-1111-1111-111111111111</key>
-		<dict>
-			<key>colorindex</key>
-			<integer>3</integer>
-			<key>note</key>
-			<string>extension picker</string>
-			<key>xpos</key>
-			<real>630</real>
-			<key>ypos</key>
-			<real>540</real>
+			<real>340.0</real>
 		</dict>
 		<key>D1111111-1111-1111-1111-111111111111</key>
 		<dict>
@@ -787,18 +935,29 @@ Configure the GitHub username under "Configure Workflow…".</string>
 			<key>note</key>
 			<string>entry: gm (my repos)</string>
 			<key>xpos</key>
-			<real>30</real>
+			<real>30.0</real>
 			<key>ypos</key>
-			<real>500</real>
+			<real>500.0</real>
 		</dict>
 		<key>D2222222-2222-2222-2222-222222222222</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>5</integer>
 			<key>xpos</key>
-			<real>230</real>
+			<real>230.0</real>
 			<key>ypos</key>
-			<real>500</real>
+			<real>500.0</real>
+		</dict>
+		<key>E1111111-1111-1111-1111-111111111111</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>3</integer>
+			<key>note</key>
+			<string>extension picker</string>
+			<key>xpos</key>
+			<real>630.0</real>
+			<key>ypos</key>
+			<real>540.0</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
